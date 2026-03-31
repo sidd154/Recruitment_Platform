@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-fintech-base: #181B26;
+  --color-fintech-surface: #262B3B;
+  --color-fintech-amber: #E8A830;
+  --color-fintech-amber-hover: #FBE09B;
+  --color-fintech-cream: #FCFAF7;
+  --color-fintech-sage: #85B597;
+  --color-fintech-ash: #9BA6BA;
+  
+  --font-editorial: "Playfair Display", serif;
+  --font-terminal: "DM Mono", monospace;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer utilities {
+  .border-fintech-border {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: var(--color-fintech-cream);
+  background-color: var(--color-fintech-base);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-fintech-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-fintech-ash);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-fintech-amber);
+}

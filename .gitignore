@@ -1,0 +1,24 @@
+# Environments
+backend/venv/
+backend/venv2/
+backend/env/
+.env
+backend/.env
+frontend/.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+dist/
+build/
+
+# Runtime Storage
+backend/storage/
+.npm
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
