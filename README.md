@@ -88,55 +88,7 @@ The application will be running at `http://localhost:5173`. Frontend API request
 
 ---
 
-## Architectural Agent Flow
 
-```mermaid
-graph TD
-    %% Candidate Flow
-    subgraph Candidate Workflow
-        A[Candidate Uploads Resume] -->|Resume Parser Node| B(Extracts JSON: Skills & Tools)
-        B -->|Test Generator Node| C(Generates 20 Tailored MCQs)
-        C --> D{Evaluation >= 70%?}
-        D -->|Pass| E[Passport Issuer Node]
-        E --> F((Verifiable Skill Passport))
-        D -->|Fail| G[Roadmap Generator Node]
-        G --> H((Study Roadmap & Next Steps))
-    end
-
-### Candidate Experience
-![Candidate Dashboard](docs/screenshots/candidate_dashboard.png)
-![Skill Passport & Roadmap](docs/screenshots/skill_passport.png)
-
-
-    %% Recruiter Flow
-    subgraph Recruiter Workflow
-        I[Recruiter Job Input] -->|Brief Generator Node| J(Expands into Job Focus Areas)
-        J --> K((Published Job Board))
-        
-        %% Job Matching
-        F -.->|Continuous Matching| L[Job Matcher Node]
-        K -.->|Continuous Matching| L
-        L --> M[Matches & Gap Analytics]
-    end
-
-### Recruiter Experience
-![Recruiter Dashboard](docs/screenshots/recruiter_dashboard.png)
-![Job Matching & Analytics](docs/screenshots/job_matching.png)
-
-
-    %% Interview Co-Pilot
-    subgraph Live Co-Pilot Interview
-        N[Websocket P2P Room] --> O(Live Chat Transcript Stream)
-        O -->|Recruiter Triggers| P[Bot Interviewer Node]
-        P -->|Evaluates context against Jobs| Q(Suggests Surgical Follow-up Qs)
-        N -->|Transcript Closes| R[Summarizer Node]
-        R --> S((Final Behavioral & Technical Scorecard))
-    end
-
-### Live Interview Room
-![Live Interview Session](docs/screenshots/live_interview.png)
-
-```
 
 SkillBridge operates a pipeline of 7 specialized, autonomous agents orchestrated by LangGraph:
 
