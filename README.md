@@ -13,6 +13,9 @@ license: apache-2.0
 ## Project Overview
 SkillBridge solves the modern hiring problem by deploying Autonomous AI Agents at every step of the recruitment flow. From instantaneously parsing resumes to issuing verifiable "Skill Passports", the platform reduces bias and recruiter fatigue. The highlight of the product is a fully integrated **Live Co-Pilot Interview Room** where a human recruiter and an AI collaborate in real-time to interview a candidate, complete with peer-to-peer Audio/Video and a shared terminal.
 
+![SkillBridge Landing Page](docs/screenshots/landing_page.png)
+
+
  
 ## How This Application Helps Overall
 Recruitment is currently plagued by overwhelming applicant volume, slow technical screening processes, and interviewer fatigue. 
@@ -109,6 +112,11 @@ graph TD
         G --> H((Study Roadmap & Next Steps))
     end
 
+### Candidate Experience
+![Candidate Dashboard](docs/screenshots/candidate_dashboard.png)
+![Skill Passport & Roadmap](docs/screenshots/skill_passport.png)
+
+
     %% Recruiter Flow
     subgraph Recruiter Workflow
         I[Recruiter Job Input] -->|Brief Generator Node| J(Expands into Job Focus Areas)
@@ -120,6 +128,11 @@ graph TD
         L --> M[Matches & Gap Analytics]
     end
 
+### Recruiter Experience
+![Recruiter Dashboard](docs/screenshots/recruiter_dashboard.png)
+![Job Matching & Analytics](docs/screenshots/job_matching.png)
+
+
     %% Interview Co-Pilot
     subgraph Live Co-Pilot Interview
         N[Websocket P2P Room] --> O(Live Chat Transcript Stream)
@@ -128,6 +141,10 @@ graph TD
         N -->|Transcript Closes| R[Summarizer Node]
         R --> S((Final Behavioral & Technical Scorecard))
     end
+
+### Live Interview Room
+![Live Interview Session](docs/screenshots/live_interview.png)
+
 ```
 
 SkillBridge operates a pipeline of 7 specialized, autonomous agents orchestrated by LangGraph:
