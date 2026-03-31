@@ -1,12 +1,3 @@
----
-title: SkillBridge
-emoji: 🌍
-colorFrom: purple
-colorTo: indigo
-sdk: docker
-pinned: false
-license: apache-2.0
----
 
 # SkillBridge: Agentic AI Recruitment Platform
 
