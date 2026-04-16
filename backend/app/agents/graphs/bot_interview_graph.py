@@ -5,6 +5,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase
+from app.config import settings
 
 class BotInterviewState(TypedDict):
     application_id: str
@@ -23,7 +24,7 @@ class BotInterviewState(TypedDict):
 
 # Node 1: Analyze & Route
 def interview_brain_node(state: BotInterviewState):
-    llm = ChatOpenAI(model="gpt-4o", temperature=0.7)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0.7)
     
     transcript_str = "\n".join([f"{m['role']}: {m['content']}" for m in state.get("transcript", [])])
     

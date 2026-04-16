@@ -1,161 +1,362 @@
+<div align="center">
 
-# SkillBridge: Agentic AI Recruitment Platform
+# ⬡ SkillBridge
+### Agentic AI Recruitment Platform
 
-## Project Overview
-SkillBridge solves the modern hiring problem by deploying Autonomous AI Agents at every step of the recruitment flow. From instantaneously parsing resumes to issuing verifiable "Skill Passports", the platform reduces bias and recruiter fatigue. The highlight of the product is a fully integrated **Live Co-Pilot Interview Room** where a human recruiter and an AI collaborate in real-time to interview a candidate, complete with peer-to-peer Audio/Video and a shared terminal.
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://reactjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Agentic-FF6B35)](https://langchain-ai.github.io/langgraph/)
 
-![SkillBridge Landing Page](docs/screenshots/landing_page.png)
+**Stop relying on unverified paper. SkillBridge deploys autonomous AI agents at every stage of the recruitment pipeline — from resume parsing to live co-pilot interviews.**
 
+[Live Demo](#demo-accounts) · [Quick Start](#quick-start) · [Architecture](#architecture) · [Tech Stack](#tech-stack)
 
- 
-## How This Application Helps Overall
-Recruitment is currently plagued by overwhelming applicant volume, slow technical screening processes, and interviewer fatigue. 
-SkillBridge dynamically resolves this:
-- **For Candidates:** You receive instant feedback on your resume, a customized roadmap if you fail to pass the benchmark tests, and a globally verifiable "Skill Passport" if you succeed, ending the cycle of "ghosting".
-- **For Recruiters:** You skip manually screening 1,000+ resumes. You only interview pre-verified, passport-holding candidates. During the interview, an AI agent listens in and instantly generates high-quality, contextual follow-up questions tailored to your specific job requirements, drastically improving signal-to-noise ratio in technical interviews.
+</div>
 
 ---
 
-## How to Run Locally
+## Overview
+
+SkillBridge solves the modern hiring problem by deploying **7 specialized autonomous AI agents** at every step of the recruitment flow. From instantly parsing resumes and generating tailored assessments, to issuing verifiable **Skill Passports** and powering a **Live Co-Pilot Interview Room** — the platform eliminates bias, reduces recruiter fatigue, and ends candidate ghosting.
+
+### For Candidates
+- Upload your resume → AI extracts skills and auto-generates a **20-question tailored assessment**
+- Pass (≥70%) → Receive a verifiable **Skill Passport** matched against live job requisitions
+- Fail → Receive a structured **Competency Reconstruction Roadmap** with curated learning resources and a retake window
+
+### For Recruiters
+- Input a job title → AI **expands it** into a full Job Brief with skill requirements and focus areas
+- Skip manual screening — only passport-holding, pre-verified candidates surface in your pipeline
+- During interviews, an AI **Co-Pilot agent** listens to the live transcript and suggests precision follow-up questions tailored to your job focus areas
+
+---
+
+## Screenshots
+
+### 🔐 Landing Page
+
+![SkillBridge Landing Page](docs/screenshots/landing_page.png)
+
+---
+
+### 👤 Candidate Experience
+
+**Live Job Feed** — Skill Passport auto-aligns against active requisitions with match scores
+
+![Candidate Dashboard — Live Job Feed](docs/screenshots/candidate_dashboard.png)
+
+**Resume Parsing Terminal** — Drag & drop resume for deep-layer AI skill extraction
+
+![Resume Parsing Terminal](docs/screenshots/resume_upload.png)
+
+**Profile Ledger** — Candidate identity and academic profile configuration
+
+![Profile Ledger](docs/screenshots/skill_passport.png)
+
+**Competency Reconstruction Roadmap** — Structured learning nodes with curated resources for failed assessments
+
+![Competency Reconstruction Roadmap](docs/screenshots/roadmap.png)
+
+---
+
+### 🏢 Recruiter Experience
+
+**Live Pipeline** — Manage all active recruitment requisitions and their candidate nodes
+
+![Recruiter Live Pipeline](docs/screenshots/recruiter_dashboard.png)
+
+**Talent Match Search** — AI-matched candidate pool ranked by Skill Passport alignment
+
+![Talent Match Search](docs/screenshots/job_matching.png)
+
+**Create Talent Node (Initialize Position)** — AI-powered job brief builder with skill verification matrix
+
+![Initialize Position](docs/screenshots/create_job.png)
+
+---
+
+## Demo Accounts
+
+The app runs in **demo mode** (in-memory session store) with pre-seeded accounts — no database setup required.
+
+| Role | Email | Password |
+|------|-------|----------|
+| Candidate | `candidate@demo.com` | `password` |
+| Recruiter | `recruiter@demo.com` | `password` |
+
+---
+
+## Quick Start
 
 ### Prerequisites
-- Node.js (v18+)
-- Python (3.9+)
-- Supabase account (optional, for persistent data. App runs in in-memory session mode otherwise)
+- **Node.js** v18+
+- **Python** 3.9+
+- An **OpenAI API Key** (GPT-4o)
+- Supabase account *(optional — for persistent storage; app runs fully in-memory without it)*
 
-### One-Time Setup
+### 1. Clone the Repository
 
-These steps only need to be run once when you first set up the project.
-
-**1. Backend Setup**
 ```bash
-cd backend
-python -m venv venv
-# On Windows: venv\Scripts\activate
-# On Mac/Linux: source venv/bin/activate
-pip install -r requirements.txt
-# Create a .env file based on the project requirements (e.g., OPENAI_API_KEY)
+git clone https://github.com/your-username/skillbridge.git
+cd skillbridge
 ```
 
-**2. Frontend Setup**
+### 2. Backend Setup
+
+```bash
+cd backend
+
+# Create and activate a virtual environment
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# macOS / Linux
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment variables
+cp .env.example .env
+# Edit .env and fill in your OPENAI_API_KEY and (optionally) Supabase credentials
+```
+
+### 3. Frontend Setup
+
 ```bash
 cd frontend
 npm install
 ```
 
-### Run Every Time
+### 4. Run the Application
 
-To launch the application, you'll need two separate terminal windows.
+Open **two terminal windows**:
 
-**Terminal 1: Start the Backend server**
+**Terminal 1 — Backend (FastAPI)**
 ```bash
 cd backend
-# On Windows: venv\Scripts\activate
-# On Mac/Linux: source venv/bin/activate
+# Activate venv first (see above)
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**Terminal 2: Start the Frontend server**
+**Terminal 2 — Frontend (Vite + React)**
 ```bash
 cd frontend
 npm run dev
 ```
 
-The application will be running at `http://localhost:5173`. Frontend API requests are automatically proxied to the backend.
+The app will be live at **[http://localhost:5173](http://localhost:5173)**. All frontend API requests are automatically proxied to the backend at port 8000.
 
 ---
 
-## Tech Stack & Architecture (And Why We Used It)
+## Environment Variables
 
-### 1. Frontend
-* **React 18 & TypeScript:** State-of-the-art component-based UI. TypeScript guarantees type safety, preventing massive runtime crashes during heavy AI state payloads.
-* **Vite:** High-performance build tooling used to drastically reduce Hot Module Reloading times compared to Webpack/CRA.
-* **Tailwind CSS:** For professional, sleek, and highly maintainable utility styling and dynamic animations without bloated `.css` files.
-* **Lucide React:** Consistent, lightweight, scaleable SVGs.
-* **Zustand:** Ultra-lightweight global state management (specifically for authentication), avoiding Redux boilerplate.
-* **TanStack Query (React Query):** Data fetching, caching, and state synchronization, ensuring the dashboards auto-refresh effortlessly.
+Create a `.env` file in the `backend/` directory. Use `.env.example` as a template:
 
-### 2. Backend
-* **FastAPI (Python):** High-throughput, highly asynchronous API framework. Chosen explicitly because Python is the native ecosystem for AI tools (LangChain), and FastAPI easily supports WebSockets and async execution loops.
-* **LangGraph & LangChain:** Core logic framing for stateful LLM operations, allowing us to build cyclic, graph-based agents that maintain memory and complex branching logic natively.
-* **OpenAI (GPT-4o):** State-of-the-art reasoning model powering the entire agentic layer.
-* **Supabase / PostgreSQL:** Relational Postgres data. Chosen for its real-time capabilities and effortless cloud scaling. 
-
-### 3. Networking & Real-Time Setup
-* **HTTP REST APIs:** Used for basic CRUD, authentication, and state management (e.g. `/api/auth`, `/api/jobs`).
-* **WebSockets (`/api/ws/...`):** Ultra-low latency, bidirectional streaming. WebSockets bypass traditional HTTP request overhead, allowing us to push live chat transcripts, synced interactive terminal code, and AI suggestions instantaneously.
-* **WebRTC (Peer-to-Peer):** We integrated `getUserMedia` directly into the websocket loop to act as a **Signaling Server** (distributing SDP Offers, Answers, and ICE Candidates). We route connections through Google's explicit STUN servers. This ensures video and audio stream from the recruiter to the candidate completely peer-to-peer, bypassing expensive media server costs and enforcing zero-latency streaming.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | ✅ Yes | GPT-4o API key powering all agent graphs |
+| `SUPABASE_URL` | Optional | Supabase project URL for persistent storage |
+| `SUPABASE_KEY` | Optional | Supabase anon/service key |
+| `SUPABASE_RESUME_BUCKET` | Optional | Supabase Storage bucket name for resume PDFs |
+| `JWT_SECRET_KEY` | Optional | Secret for JWT token signing (defaults to a dev key) |
+| `DEMO_MODE` | Optional | Set to `true` to force in-memory session store |
 
 ---
 
+## Architecture
 
+SkillBridge orchestrates **7 autonomous agents** using **LangGraph** stateful graph execution:
 
-SkillBridge operates a pipeline of 7 specialized, autonomous agents orchestrated by LangGraph:
+```mermaid
+graph TD
+    subgraph Candidate Pipeline
+        A[Candidate Uploads Resume] -->|resume_parser_graph| B(Extracted JSON: Skills & Proficiencies)
+        B -->|test_generator_graph| C(20 Tailored MCQ Assessment)
+        C --> D{Score ≥ 70%?}
+        D -->|Pass| E[passport_issuer_graph]
+        E --> F((Verifiable Skill Passport))
+        D -->|Fail| G[summarizer_graph]
+        G --> H((Competency Reconstruction Roadmap))
+    end
 
-1. **`resume_parser_graph.py` (The Ingestion Node)**
-   - **Flow**: Candidate uploads PDF -> PDF uploaded to **Supabase Storage** -> PDF parsed to string -> GPT-4o extracts technical skills, education, and proficiencies -> Standardized JSON.
-2. **`test_generator_graph.py` (The Evaluator Node)**
-   - **Flow**: Reads extracted JSON skills -> Dynamically generates 20 strict multiple-choice and behavioral questions -> Returns a verification assessment.
-3. **`passport_issuer_graph.py` & `summarizer_graph.py` (The Certification Nodes)**
-   - **Flow**: Reads candidate's assessment marks -> If passing (>= 70%), issues a verifiable Skill Passport. -> If failing, maps knowledge gaps and issues an Improvement Roadmap with curated learning resources.
-4. **`brief_generator_graph.py` (The Recruiter Expansion Node)**
-   - **Flow**: Recruiter inputs basic prompt ("Need Python dev") -> Agent expands this into a comprehensive Job Brief with Focus Areas and target competencies.
-5. **`job_matching_graph.py` (The Broker Node)**
-   - **Flow**: Constantly iterates through active Jobs and active Skill Passports -> Uses GPT-4o to compute deep Match Scores (0-100) -> Generates personalized "Skill Gap" reports for recruiters.
-6. **`bot_interview_graph.py` (The Co-Pilot Node)**
-   - **Flow**: Active during the live WebSocket P2P interview. Reads the rolling chat transcript -> Evaluates Candidate's last statement -> Cross-references Recruiter's Job Focus Areas -> Returns an optimal follow-up behavioral/technical question perfectly suited to grill the candidate further.
+    subgraph Recruiter Pipeline
+        I[Recruiter Inputs Job Prompt] -->|brief_generator_graph| J(Expanded Job Brief + Focus Areas)
+        J --> K((Published Requisition on Live Pipeline))
+        F -..->|Continuous Matching| L[job_matching_graph]
+        K -..->|Continuous Matching| L
+        L --> M((Match Scores + Skill Gap Reports))
+    end
 
----
+    subgraph Live Co-Pilot Interview
+        N[P2P WebSocket Room Opens] --> O(Live Chat Transcript Streams)
+        O -->|Recruiter Triggers Copilot| P[bot_interview_graph]
+        P -->|Cross-ref Job Focus Areas| Q((Surgical Follow-up Question Suggested))
+        N -->|Session Closes| R[summarizer_graph]
+        R --> S((Behavioral & Technical Scorecard))
+    end
+```
 
-## File By File Breakdown
+### Agent Registry
 
-### Root Directory
-* `package.json`, `tsconfig.json`, `vite.config.ts`: Configuration files scaffolding the React/Vite frontend.
-* `requirements.txt`: Python dependencies required for the FastAPI/LangGraph backend.
-* `.env`: Environment variables covering `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_RESUME_BUCKET`, etc.
-
-### Backend (`/backend/app/`)
-* **`main.py`**: The application's entry point. Connects FastAPI, mounts CORS middleware, imports all routers, and optionally seeds Demo-Mode mock databases.
-* **`supabase_schema.sql`**: The entire relational Postgres architecture. Outlines tables exactly mirroring candidates, recruiters, jobs, test_sessions, roadmaps, passports, and interviews.
-* **`/routers/` (The Network Layer)**
-  * `auth.py`: JWT Generation and Login logic.
-  * `candidates.py`: Handles Profile fetching, Roadmap fetching, and Resume Upload endpoints.
-  * `recruiters.py`: Handles Recruiter company profiles and job ownership constraints.
-  * `jobs.py`: Fetches job boards and matching analytics.
-  * `tests.py`: Evaluation submission layer for MCQs.
-  * `interviews.py`: **The core real-time engine.** Outlines the `LiveInterviewManager` which tracks WebSocket connections, manages Waiting Rooms, securely relays P2P WebRTC Signaling logic (`send_to_peer`), and queries the Copilot AI graph asynchronously.
-  * `proctoring.py`: (Reserved for future anti-cheat video proctoring WebSocket loops).
-* **`/services/` (The Internal Logic Layer)**
-  * `supabase.py`: Singleton initializing the Supabase DB client.
-  * `auth_middleware.py`: Custom JWT decoder injected as a FastAPI dependency (`Depends()`) to protect private endpoints.
-  * `email_service.py`: SMTP logic setup for sending email notifications.
-  * `session_store.py`: In-memory Python Dictionary acting as a temporary lightweight "Mock Database". Utilized seamlessly in Demo environments to avoid hitting Postgres rate limits.
-* **`/agents/graphs/` (The AI Layer)**
-  * Files exactly mirroring the 6 agents detailed in the **Architectural Agent Flow** block above. Each file contains `TypedDict` State definitions, logic node functions, and specific system prompts mapped to `StateGraph` builders via LangGraph.
-
-### Frontend (`/frontend/src/`)
-* **`App.tsx`**: React Router DOM configuration isolating Candidate vs Recruiter Dashboards and protecting routes based on Authentication states.
-* **`/store/authStore.ts`**: Zustand global configuration storing User JWT objects instantly across the React Tree.
-* **`/services/api.ts`**: Axios instance setup automatically attaching `Bearer` tokens to HTTP headers.
-* **Candidate Views (`/pages/candidate/`)**
-  * `Layout.tsx`: The candidate's navigation sidebar wrapper.
-  * `ResumeUpload.tsx`: Drag-and-drop parsing screen calling the Resume parsing graph.
-  * `TestTaker.tsx`: Renders the dynamically generated MCQ questions safely.
-  * `PassportView.tsx`: Displays either the glowing Green "Skill Passport" success banner, or the Orange "Roadmap" recovery screen.
-  * `BotInterview.tsx`: **The P2P Candidate WebRTC Engine.** Captures candidate `getUserMedia` streams, creates an Answer to an SDP Offer, displays the Recruiter's video, and maps the ongoing transcript.
-  * `Jobs.tsx`: Shows ranked jobs tailored to the candidate's passport.
-* **Recruiter Views (`/pages/recruiter/`)**
-  * `Dashboard.tsx`: High-level metrics tracking open headhunts and passport applicants.
-  * `JobList.tsx`: Job listing cards incorporating intelligent polling (`@tanstack/react-query`) to highlight "Waiting Candidates" using real-time API fetches.
-  * `CreateJob.tsx`: AI Co-authored Job posting wizard.
-  * `LiveSession.tsx`: **The Recruiter P2P WebRTC Host.** Creates the active SDP Offer upon the candidate signaling readiness, handles ICE routes, renders the Picture-in-Picture candidate video feed, and houses the "Suggest Question" Copilot UI panel.
+| Agent File | Role | Trigger |
+|---|---|---|
+| `resume_parser_graph.py` | Extracts structured skill JSON from PDF via GPT-4o | Resume upload |
+| `test_generator_graph.py` | Dynamically generates 20 tailored MCQs from skill JSON | Post-parse |
+| `passport_issuer_graph.py` | Issues verifiable Skill Passport for passing candidates | Score ≥ 70% |
+| `summarizer_graph.py` | Generates Competency Roadmap with curated resources | Score < 70% |
+| `brief_generator_graph.py` | Expands recruiter's job prompt into full structured brief | Job creation |
+| `job_matching_graph.py` | Computes GPT-4o match scores between passports & jobs | Continuous |
+| `bot_interview_graph.py` | Suggests precision follow-up questions during live interview | Recruiter trigger |
 
 ---
 
-## Future Scope & Pipeline
+## Tech Stack
 
-SkillBridge is built on an infinitely scalable foundational graph. Our upcoming pipeline includes:
-1. **Automated Cheating Proctoring**: Utilizing the `proctoring.py` WebSocket line to stream webcam snapshots to a distinct `Proctor_AI_Graph` running continuous multi-modal eye-tracking and off-screen detection algorithms.
-2. **Terminal Code Sync**: Expanding the live Interview Room to include a Monaco Editor (VSCode Web) synced over WebSocket delta operations to allow live coding exercises.
-3. **Automated Voice-Mode Interviews**: Merging OpenAI's Realtime Audio API to allow the AI itself (acting as the sole Recruiter) to conduct 30-minute synchronous voice interviews natively.
-4. **Calendar Booking Engine**: Allowing Candidates to schedule interviews directly aligned with a Recruiter's Google Calendar via OAuth2, bypassing the instant "Waiting Room" mechanic.
+### Frontend
+| Technology | Purpose |
+|---|---|
+| **React 18 + TypeScript** | Component-based UI with strict type safety for complex AI state |
+| **Vite** | High-performance bundler with instant HMR |
+| **Tailwind CSS** | Utility-first styling with dynamic animations |
+| **Zustand** | Lightweight global auth state management |
+| **TanStack Query** | Data fetching, caching, and background polling |
+| **Lucide React** | Consistent, scalable icon library |
+
+### Backend
+| Technology | Purpose |
+|---|---|
+| **FastAPI (Python)** | Async API framework with native WebSocket support |
+| **LangGraph + LangChain** | Stateful graph-based autonomous agent orchestration |
+| **OpenAI GPT-4o** | Powers all 7 agentic reasoning and generation nodes |
+| **Supabase / PostgreSQL** | Relational storage with real-time capabilities (optional) |
+| **python-jose** | JWT authentication and session management |
+
+### Real-Time & Networking
+| Technology | Purpose |
+|---|---|
+| **WebSockets** | Low-latency bidirectional streams for live interview transcript and AI suggestions |
+| **WebRTC (P2P)** | Peer-to-peer audio/video in the interview room — routed via Google STUN servers, zero media server cost |
+| **HTTP REST** | Standard CRUD, auth flows, and job/candidate management |
+
+---
+
+## Project Structure
+
+```
+skillbridge/
+├── backend/
+│   ├── app/
+│   │   ├── main.py                  # FastAPI entry point, CORS, router mounts, demo seed
+│   │   ├── config.py                # Centralized settings and environment config
+│   │   ├── agents/
+│   │   │   └── graphs/              # All 7 LangGraph agent definitions
+│   │   │       ├── resume_parser_graph.py
+│   │   │       ├── test_generator_graph.py
+│   │   │       ├── passport_issuer_graph.py
+│   │   │       ├── summarizer_graph.py
+│   │   │       ├── brief_generator_graph.py
+│   │   │       ├── job_matching_graph.py
+│   │   │       └── bot_interview_graph.py
+│   │   ├── routers/                 # FastAPI route handlers
+│   │   │   ├── auth.py              # JWT login & registration
+│   │   │   ├── candidates.py        # Profile, resume upload, roadmap
+│   │   │   ├── recruiters.py        # Company profile, job ownership
+│   │   │   ├── jobs.py              # Job board, matching analytics
+│   │   │   ├── tests.py             # MCQ submission & evaluation
+│   │   │   ├── interviews.py        # WebSocket LiveInterviewManager + WebRTC signaling
+│   │   │   └── proctoring.py        # (Reserved) Anti-cheat proctoring WebSocket
+│   │   └── services/
+│   │       ├── supabase.py          # Supabase client singleton
+│   │       ├── auth_middleware.py   # JWT dependency for protected routes
+│   │       ├── email_service.py     # SMTP notification service
+│   │       └── session_store.py     # In-memory mock DB for demo/dev mode
+│   ├── .env.example                 # Environment variable template
+│   ├── requirements.txt             # Python dependencies
+│   ├── admin_seed.py                # Seeds admin accounts to Supabase
+│   ├── seed_demo.py                 # Seeds demo candidate/recruiter data
+│   ├── setup_db.py                  # Supabase schema initialization helper
+│   └── supabase_schema.sql          # Full Postgres schema (tables, RLS policies)
+│
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx                  # React Router — candidate vs recruiter route isolation
+│   │   ├── store/
+│   │   │   └── authStore.ts         # Zustand global auth state
+│   │   ├── services/
+│   │   │   └── api.ts               # Axios instance with Bearer token injection
+│   │   └── pages/
+│   │       ├── candidate/
+│   │       │   ├── Layout.tsx        # Candidate nav sidebar wrapper
+│   │       │   ├── Jobs.tsx          # Live Job Feed with passport alignment scores
+│   │       │   ├── ResumeUpload.tsx  # Drag-and-drop resume parsing terminal
+│   │       │   ├── TestTaker.tsx     # MCQ assessment renderer
+│   │       │   ├── PassportView.tsx  # Skill Passport success / Roadmap recovery
+│   │       │   └── BotInterview.tsx  # Candidate WebRTC engine (getUserMedia, SDP Answer)
+│   │       └── recruiter/
+│   │           ├── Dashboard.tsx     # Live Pipeline — requisition management
+│   │           ├── JobList.tsx       # Job cards with real-time candidate polling
+│   │           ├── CreateJob.tsx     # AI-powered job brief wizard
+│   │           └── LiveSession.tsx   # Recruiter WebRTC host (SDP Offer, ICE, Co-Pilot panel)
+│   ├── index.html
+│   ├── vite.config.ts
+│   └── package.json
+│
+├── docs/
+│   └── screenshots/                 # Application screenshots for README
+│
+├── Dockerfile                       # Production Docker image
+├── .env.example                     # Root-level env template
+└── README.md
+```
+
+---
+
+## Key Features Deep Dive
+
+### 🔍 Intelligent Resume Parsing
+Upload any PDF resume → GPT-4o runs structured extraction, identifying technical skills, frameworks, experience levels, and educational background → Returns normalized JSON consumed by downstream agents.
+
+### 📋 Adaptive Assessment Engine
+No fixed question bank. Every 20-question test is **dynamically generated** from the candidate's own extracted skill profile, ensuring assessments are always relevant, fair, and un-gameable.
+
+### 🛂 Verifiable Skill Passports
+A persistent, structured credential issued upon passing. Passports contain extracted skill sets, assessment scores, and timestamps — continuously matched against active job requisitions by the `job_matching_graph`.
+
+### 🗺️ Competency Reconstruction Roadmap
+Candidates who fail don't hit a dead end. The `summarizer_graph` analyzes their skill gaps, constructs a prioritized learning module sequence, and links to curated external resources — complete with a retake eligibility window.
+
+### 🎯 AI Job Matching
+The `job_matching_graph` continuously computes deep semantic match scores (0–100) between Skill Passports and active job requisitions using GPT-4o reasoning — surfacing ranked candidates with detailed gap analytics for recruiters.
+
+### 🎙️ Live Co-Pilot Interview Room
+A peer-to-peer audio/video interview room powered by WebRTC and WebSocket signaling. Recruiters trigger the `bot_interview_graph` mid-interview — the agent reads the live transcript, cross-references the job's focus areas, and returns a targeted follow-up question in real time.
+
+---
+
+## Roadmap
+
+| Feature | Status |
+|---|---|
+| AI Proctoring (webcam eye-tracking + off-screen detection) | 🔜 Planned |
+| Monaco Editor sync (live coding exercises in interview room) | 🔜 Planned |
+| Voice-Mode Autonomous Interviews (OpenAI Realtime Audio API) | 🔜 Planned |
+| Calendar Booking Engine (Google OAuth2 scheduling) | 🔜 Planned |
+| Multi-tenant enterprise workspace support | 🔜 Planned |
+
+---
+
+## License
+
+Licensed under the [Apache 2.0 License](LICENSE).
+
+---
+
+<div align="center">
+Built with LangGraph · FastAPI · React · GPT-4o
+</div>

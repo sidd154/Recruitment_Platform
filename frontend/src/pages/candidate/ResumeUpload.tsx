@@ -62,12 +62,12 @@ export default function ResumeUpload() {
         formData.append('twelfth_marks', socials.twelfth_marks);
 
         try {
-            const { data } = await api.post('/candidates/upload-resume', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            const { data } = await api.post('/candidates/upload-resume', formData);
             setSuccessData(data);
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'CONNECTION_ERR: End server parsing endpoint unavailable.');
+            console.error("AXIOS UPLOAD ERROR:", err);
+            console.error("err.response:", err.response);
+            setError(err.response?.data?.detail || err.message || 'CONNECTION_ERR: End server parsing endpoint unavailable.');
         } finally {
             setLoading(false);
         }

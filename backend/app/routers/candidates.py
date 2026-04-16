@@ -75,6 +75,7 @@ async def upload_resume(
     twelfth_marks: str = Form(""),
     user: dict = Depends(require_candidate)
 ):
+    print("====== ENDPOINT HIT ======", flush=True)
     user_id = user["user_id"]
     file_content = await resume.read()
     

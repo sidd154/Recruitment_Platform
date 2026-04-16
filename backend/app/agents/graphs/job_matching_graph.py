@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase
+from app.config import settings
 
 class JobMatchingState(TypedDict):
     candidate_id: str
@@ -23,7 +24,7 @@ def match_and_rank_node(state: JobMatchingState):
     if not jobs:
         return {"ranked_jobs": []}
         
-    llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0.1)
     
     sys = """You are an AI job matcher. For each job, compute match_score (0-100), match_reason (1 sentence), skill_overlap, skill_gaps against the candidate's verified passport skills. Return a JSON array sorted by match_score desc."""
     msg = f"Candidate Skills: {json.dumps(skills)}\nJobs: {json.dumps(jobs)}"

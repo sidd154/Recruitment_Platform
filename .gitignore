@@ -1,6 +1,7 @@
 # Environments
 backend/venv/
 backend/venv2/
+backend/venv_antigravity/
 backend/env/
 .env
 backend/.env
@@ -11,9 +12,12 @@ frontend/node_modules/
 frontend/dist/
 dist/
 build/
+*.log
 
 # Runtime Storage
 backend/storage/
+backend/static/
+backend/demo_local_store.json
 .npm
 .DS_Store
 
@@ -22,3 +26,10 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.pytest_cache/
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

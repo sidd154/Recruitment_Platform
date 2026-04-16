@@ -5,6 +5,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase, SUPABASE_RESUME_BUCKET
+from app.config import settings
 import io
 
 # State definition
@@ -50,7 +51,7 @@ def parse_skills_node(state: ResumeParserState):
         return state
         
     raw_text = state.get("raw_text")
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0)
     
     sys_prompt = """You are an advanced resume parser. You must extract data into a strict JSON object with this exact structure:
 {
@@ -74,7 +75,7 @@ Return ONLY valid JSON. No markdown ticks, no explanation."""
         json_str = response.content.replace('```json\n', '').replace('```json', '').replace('```', '').strip()
         parsed_data = json.loads(json_str)
         return {
-            "extracted_skills": parsed_data.get("extracted_skills", []),
+            "extracted_skills": parsed_data.get("extracted_skills") or [],
             "tenth_marks": parsed_data.get("tenth_marks"),
             "twelfth_marks": parsed_data.get("twelfth_marks"),
             "github_link": parsed_data.get("github_link"),
@@ -84,7 +85,7 @@ Return ONLY valid JSON. No markdown ticks, no explanation."""
     except Exception as e:
         return {"error": f"Failed to parse LLM response: {e}"}
 
-DEMO_CANDIDATE_ID = "00000000-0000-0000-0000-000000000001"
+# Demo ID is now in settings.DEMO_CANDIDATE_ID
 
 # Node 3: Save Skills
 def save_skills_node(state: ResumeParserState):
@@ -102,22 +103,11 @@ def save_skills_node(state: ResumeParserState):
         "linkedin_link": state.get("linkedin_link")
     }
 
-    # Ensure the demo candidate exists in the Supabase tables first so foreign keys work
-    if candidate_id == DEMO_CANDIDATE_ID:
-        client = get_supabase()
-        client.table("profiles").upsert({
-            "id": DEMO_CANDIDATE_ID,
-            "email": "demo.candidate@skillbridge.dev",
-            "full_name": "Demo Candidate",
-            "role": "candidate",
-            "phone": "0000000000"
-        }, on_conflict="id").execute()
-        client.table("candidates").upsert({
-            "id": DEMO_CANDIDATE_ID,
-            "college": "Demo University",
-            "graduation_year": 2024,
-            "degree": "B.Tech"
-        }, on_conflict="id").execute()
+    # For demo user: store in session_store (can't write to Supabase due to auth FK)
+    if candidate_id == settings.DEMO_CANDIDATE_ID:
+        from app.services import session_store
+        session_store.save_session(f"candidate_data:{candidate_id}", update_payload)
+        return update_payload
 
     # Always save to Supabase (demo user rows are upserted earlier in the upload flow)
     client = get_supabase()

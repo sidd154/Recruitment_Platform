@@ -125,16 +125,20 @@ async def live_interview_endpoint(websocket: WebSocket, session_id: str, role: s
     
     # Fetch real data for the AI co-pilot
     client = get_supabase()
-    session_data = client.table("interview_sessions").select("*, applications(*, jobs(*, job_briefs(*)), candidates(*, profiles(*)))").eq("id", session_id).single().execute()
-    
-    job_desc = ""
+    job_desc = "Technical Interview"
     target_skills = []
-    if session_data.data:
-        app = session_data.data.get("applications", {})
-        job = app.get("jobs", {})
-        job_desc = job.get("description", "Technical Interview")
-        candidate = app.get("candidates", {})
-        target_skills = candidate.get("extracted_skills", [])
+
+    try:
+        session_data = client.table("interview_sessions").select("*, applications(*, jobs(*, job_briefs(*)), candidates(*, profiles(*)))").eq("id", session_id).single().execute()
+        
+        if session_data.data:
+            app = session_data.data.get("applications", {})
+            job = app.get("jobs", {})
+            job_desc = job.get("description", "Technical Interview")
+            candidate = app.get("candidates", {})
+            target_skills = candidate.get("extracted_skills", [])
+    except Exception as e:
+        print(f"WS Supabase Fetch Error (expected in demo mode): {e}")
 
     state = {
         "interview_session_id": session_id,

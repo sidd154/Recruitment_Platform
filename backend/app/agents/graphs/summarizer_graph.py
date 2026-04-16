@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase
+from app.config import settings
 
 class SummarizerState(TypedDict):
     interview_session_id: str
@@ -15,9 +16,9 @@ class SummarizerState(TypedDict):
     summary: Dict[str, Any]
 
 def analyse_transcript_node(state: SummarizerState):
-    llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0.1)
     
-    sys_prompt = """Call GPT-4o with full transcript and final candidate code environment snapshot. Generate: overall_score (0–100), communication_score (0–100, based on clarity, coherence, fluency), technical_score (0–100, based on accuracy of answers vs passport claims and final code quality), red_flags (list of objects: {moment: string describing the issue, transcript_or_code_ref: exact quote from transcript or code snippet}), standout_moments (same structure, for impressive answers). Return ONLY a JSON"""
+    sys_prompt = f"Call {settings.AI_MODEL_NAME} with full transcript and final candidate code environment snapshot. Generate: overall_score (0–100), communication_score (0–100, based on clarity, coherence, fluency), technical_score (0–100, based on accuracy of answers vs passport claims and final code quality), red_flags (list of objects: {{moment: string describing the issue, transcript_or_code_ref: exact quote from transcript or code snippet}}), standout_moments (same structure, for impressive answers). Return ONLY a JSON"
     transcript = json.dumps(state.get("transcript", []))
     code_snap = state.get("code_snapshot", "// No code submitted")
     content = f"TRANSCRIPT:\n{transcript}\n\nFINAL CODE SNAPSHOT:\n{code_snap}"

@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase
+from app.config import settings
 
 class BriefGeneratorState(TypedDict, total=False):
     job_id: str
@@ -18,7 +19,7 @@ class BriefGeneratorState(TypedDict, total=False):
     error: str
 
 def generate_brief_node(state: BriefGeneratorState):
-    llm = ChatOpenAI(model="gpt-4o", temperature=0.2)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0.2)
     sys_prompt = """You are an expert technical recruiter AI. Given a job description, skills, and experience required, you must construct a bot interview brief.
 Generate exactly:
 2. recruiter_questions: A list of 3-5 open-ended or technical questions the bot should ask in the live session.
@@ -53,7 +54,7 @@ No markdown formatting or explanation."""
     except Exception as e:
         return {"error": f"Failed to generate brief: {e}"}
 
-DEMO_RECRUITER_ID = "00000000-0000-0000-0000-000000000002"
+# Demo ID is now in settings.DEMO_RECRUITER_ID
 
 def save_brief_node(state: BriefGeneratorState):
     if state.get("error"):
@@ -70,7 +71,7 @@ def save_brief_node(state: BriefGeneratorState):
         "instructions": state.get("instructions")
     }
     
-    if state.get("recruiter_id") == DEMO_RECRUITER_ID:
+    if state.get("recruiter_id") == settings.DEMO_RECRUITER_ID:
         return {"instructions": state.get("instructions")}
 
     if client:

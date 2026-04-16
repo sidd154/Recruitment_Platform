@@ -6,6 +6,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase
 from app.services import session_store
+from app.config import settings
 
 class TestGeneratorState(TypedDict):
     candidate_id: str
@@ -20,7 +21,7 @@ def generate_questions_node(state: TestGeneratorState):
     if not skills:
         return {"error": "No skills provided"}
         
-    llm = ChatOpenAI(model="gpt-4o", temperature=0.2)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0.2)
     sys_prompt = """You are a technical assessment designer. Given a list of skills with claimed proficiency levels, generate exactly 5 MCQ questions. Rules: (1) distribute questions across the skills provided, (2) question difficulty must match proficiency_claimed — beginner gets definitional questions, intermediate gets application questions, advanced gets architecture/tradeoff questions, (3) each question has exactly 4 options labeled A, B, C, D with exactly one correct answer, (4) shuffle option order so the correct answer is not always in the same position, (5) include the skill name and difficulty in each question object. Return ONLY a JSON array. No explanation. No markdown. Schema: [{"question_id": "uuid-string", "skill": "string", "question_text": "string", "options": {"A": "string", "B": "string", "C": "string", "D": "string"}, "correct_answer": "A/B/C/D", "difficulty": "easy/medium/hard"}]"""
     
     messages = [
@@ -58,7 +59,7 @@ def validate_questions_node(state: TestGeneratorState):
             
     return {"generated_questions": questions}
 
-DEMO_CANDIDATE_ID = "00000000-0000-0000-0000-000000000001"
+# Demo ID is now in settings.DEMO_CANDIDATE_ID
 
 def save_session_node(state: TestGeneratorState):
     if state.get("error"):
@@ -70,23 +71,15 @@ def save_session_node(state: TestGeneratorState):
     # For the demo user, we need a real candidate row to satisfy the FK constraint.
     client = get_supabase()
     
-    # Ensure the demo candidate exists in the candidates table before inserting a test session
-    if candidate_id == DEMO_CANDIDATE_ID:
-        # Upsert the demo profile row if needed
-        client.table("profiles").upsert({
-            "id": DEMO_CANDIDATE_ID,
-            "email": "demo.candidate@skillbridge.dev",
-            "full_name": "Demo Candidate",
-            "role": "candidate",
-            "phone": "0000000000"
-        }, on_conflict="id").execute()
-        # Upsert the demo candidates row if needed
-        client.table("candidates").upsert({
-            "id": DEMO_CANDIDATE_ID,
-            "college": "Demo University",
-            "graduation_year": 2024,
-            "degree": "B.Tech"
-        }, on_conflict="id").execute()
+    # For demo user: store in session_store (can't write to Supabase due to auth FK)
+    if candidate_id == settings.DEMO_CANDIDATE_ID:
+        session_id = str(uuid.uuid4())
+        session_store.save_session(f"test_session:{session_id}", {
+            "candidate_id": candidate_id,
+            "questions": state["generated_questions"],
+            "proctoring_consent": False
+        })
+        return {"session_id": session_id}
     
     resp = client.table("test_sessions").insert({
         "candidate_id": candidate_id,

@@ -107,30 +107,34 @@ def list_jobs(user: dict = Depends(verify_token)):
     user_id = user["user_id"]
     role = user.get("role")
     
-    # --- DEMO BYPASS START ---
-    if role == "candidate":
-        all_jobs = []
-        full_data = session_store.get_all_sessions()
-        for key, val in full_data.items():
-            if key.startswith("demo_jobs_"):
-                all_jobs.extend(val)
-        return all_jobs
-    if role == "recruiter":
-        return session_store.get_session(f"demo_jobs_{user_id}") or []
-    # --- DEMO BYPASS END ---
-    
-    if role == "candidate":
-        # Candidate gets all active jobs
-        resp = client.table("jobs").select("*").eq("is_active", True).order("created_at", desc=True).execute()
-        return resp.data
+    all_jobs = []
 
-    # Check verification for recruiter
-    rec_resp = client.table("recruiters").select("is_verified").eq("id", user_id).single().execute()
-    if not rec_resp.data or not rec_resp.data.get("is_verified"):
-        raise HTTPException(status_code=403, detail="Account pending verification")
-        
-    resp = client.table("jobs").select("*").eq("recruiter_id", user_id).order("created_at", desc=True).execute()
-    return resp.data
+    # 1. Fetch Demo Jobs from session_store
+    full_data = session_store.get_all_sessions()
+    for key, val in full_data.items():
+        if key.startswith("demo_jobs_") and isinstance(val, list):
+            all_jobs.extend(val)
+
+    # 2. Fetch Real Jobs from Supabase (if client available)
+    if client:
+        try:
+            # If recruiter, only see their own jobs. If candidate/other, see all active.
+            query = client.table("jobs").select("*")
+            if role == "recruiter":
+                query = query.eq("recruiter_id", user_id)
+            else:
+                query = query.eq("is_active", True)
+            
+            resp = query.order("created_at", desc=True).execute()
+            if resp.data:
+                existing_ids = {j["id"] for j in all_jobs}
+                for j in resp.data:
+                    if j["id"] not in existing_ids:
+                        all_jobs.append(j)
+        except Exception:
+            pass
+
+    return all_jobs
 
 @router.get("/{job_id}/applicants")
 def get_job_applicants(job_id: str, user: dict = Depends(require_recruiter)):

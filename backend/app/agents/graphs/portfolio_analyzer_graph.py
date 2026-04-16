@@ -6,6 +6,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase
+from app.config import settings
 
 class PortfolioAnalyzerState(TypedDict):
     candidate_id: str
@@ -44,7 +45,7 @@ def fetch_portfolio_data_node(state: PortfolioAnalyzerState):
     return {"github_raw_html": github_html, "leetcode_raw_html": leetcode_html}
 
 def analyze_portfolio_node(state: PortfolioAnalyzerState):
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0)
     
     # If URLs strictly missing, give zero.
     if not state.get("github_link") and not state.get("leetcode_link"):
@@ -70,7 +71,7 @@ Return ONLY valid JSON:
     except Exception as e:
         return {"error": f"LLM error: {e}", "github_score": 0.0, "leetcode_score": 0.0, "total_portfolio_score": 0.0}
 
-DEMO_CANDIDATE_ID = "00000000-0000-0000-0000-000000000001"
+# Demo ID is now in settings.DEMO_CANDIDATE_ID
 
 def save_portfolio_scores_node(state: PortfolioAnalyzerState):
     candidate_id = state.get("candidate_id")
@@ -87,7 +88,7 @@ def save_portfolio_scores_node(state: PortfolioAnalyzerState):
         session_store.save_session(f"user_by_id:{candidate_id}", stored_user)
         return update_payload
 
-    if candidate_id == DEMO_CANDIDATE_ID:
+    if candidate_id == settings.DEMO_CANDIDATE_ID:
         return update_payload
         
     client = get_supabase()

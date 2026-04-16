@@ -3,7 +3,7 @@ import api from '../../services/api';
 import { Building2, MapPin, Search, Filter, Activity, CheckCircle2, ArrowRight, Loader2, Network } from 'lucide-react';
 
 const fetchAllJobs = async () => {
-    const { data } = await api.get('/jobs/');
+    const { data } = await api.get('/jobs');
     return data;
 };
 

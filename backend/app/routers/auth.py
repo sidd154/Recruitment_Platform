@@ -2,6 +2,7 @@ import os
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel, EmailStr
 from app.services.supabase import get_supabase
+from app.config import settings
 from authlib.jose import jwt
 import random
 from typing import Optional
@@ -148,14 +149,14 @@ async def verify_otp(data: OTPVerifyBase):
 async def login(data: LoginBase):
     if data.email == 'demo.candidate@skillbridge.dev' and data.password == 'Demo@1234':
         return {
-            "user": {"id": "00000000-0000-0000-0000-000000000001", "role": "candidate", "full_name": "Demo Candidate", "email": "demo.candidate@skillbridge.dev"},
+            "user": {"id": settings.DEMO_CANDIDATE_ID, "role": "candidate", "full_name": "Demo Candidate", "email": "demo.candidate@skillbridge.dev"},
             "token": "demo-token-candidate",
             "role": "candidate",
             "is_verified": True
         }
     if data.email == 'demo.recruiter@techcorp.com' and data.password == 'Demo@1234':
         return {
-            "user": {"id": "00000000-0000-0000-0000-000000000002", "role": "recruiter", "full_name": "Demo Recruiter", "email": "demo.recruiter@techcorp.com"},
+            "user": {"id": settings.DEMO_RECRUITER_ID, "role": "recruiter", "full_name": "Demo Recruiter", "email": "demo.recruiter@techcorp.com"},
             "token": "demo-token-recruiter",
             "role": "recruiter",
             "is_verified": True

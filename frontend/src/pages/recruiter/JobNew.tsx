@@ -31,7 +31,7 @@ export default function JobNew() {
         setLoading(true);
 
         try {
-            await api.post('/jobs/', {
+            await api.post('/jobs', {
                 ...formData,
                 min_experience_years: parseInt(formData.min_experience_years.toString(), 10),
                 required_skills: skills

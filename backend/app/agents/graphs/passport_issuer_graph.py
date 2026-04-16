@@ -5,6 +5,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.services.supabase import get_supabase
+from app.config import settings
 
 
 class PassportIssuerState(TypedDict):
@@ -31,11 +32,11 @@ def evaluate_answers_node(state: PassportIssuerState):
             correct += 1
             
     score = (correct / total) * 100 if total > 0 else 0
-    passed = score >= 70  # Pass threshold
+    passed = score >= settings.PASS_THRESHOLD  # Pass threshold
     
     return {"score": score, "passed": passed}
 
-DEMO_CANDIDATE_ID = "00000000-0000-0000-0000-000000000001"
+# Demo ID is now in settings.DEMO_CANDIDATE_ID
 
 def issue_passport_node(state: PassportIssuerState):
     candidate_id = state["candidate_id"]
@@ -47,7 +48,7 @@ def issue_passport_node(state: PassportIssuerState):
                        for skill in state.get("extracted_skills", [])]
     
     # Use a unique ID per session for demo users to avoid stale data shadowing
-    passport_id = f"passport-{state['session_id']}" if candidate_id == DEMO_CANDIDATE_ID else f"passport-{candidate_id}"
+    passport_id = f"passport-{state['session_id']}" if candidate_id == settings.DEMO_CANDIDATE_ID else f"passport-{candidate_id}"
     
     passport_data = {
         "id": passport_id,
@@ -60,7 +61,7 @@ def issue_passport_node(state: PassportIssuerState):
     }
     
     # For demo user: store in session_store (can't write to Supabase due to auth FK)
-    if candidate_id == DEMO_CANDIDATE_ID:
+    if candidate_id == settings.DEMO_CANDIDATE_ID:
         from app.services import session_store
         session_store.save_session(f"passport:{candidate_id}", passport_data)
         return {"error": ""}
@@ -82,23 +83,23 @@ def issue_passport_node(state: PassportIssuerState):
 
 def generate_roadmap_node(state: PassportIssuerState):
     candidate_id = state["candidate_id"]
-    llm = ChatOpenAI(model="gpt-4o", temperature=0.3)
+    llm = ChatOpenAI(model=settings.AI_MODEL_NAME, temperature=0.3)
     
-    sys_prompt = """You are a direct, honest career coach. A candidate failed their skill verification test (Score < 70%). Given their claimed skills and test score, generate an honest reality check and a specific improvement roadmap.
+    sys_prompt = f"""You are a direct, honest career coach. A candidate failed their skill verification test (Score < {settings.PASS_THRESHOLD}%). Given their claimed skills and test score, generate an honest reality check and a specific improvement roadmap.
 Return ONLY a valid JSON object with the following schema:
-{
+{{
   "reality_check": "A 2-3 sentence direct reality check about their current skill gap versus market expectations. Be honest about what is needed.",
   "roadmap": [
-    {
+    {{
       "skill_name": "string",
       "gaps": ["string", "string"],
       "resources": [
-        {"title": "string", "url": "string", "type": "course|docs|practice"}
+        {{"title": "string", "url": "string", "type": "course|docs|practice"}}
       ],
       "estimated_weeks": 2
-    }
+    }}
   ]
-}
+}}
 No explanation. No markdown formatting."""
     
     msg = f"Candidate score: {state.get('score'):.1f}%\nSkills: {json.dumps(state.get('extracted_skills'))}"
@@ -125,7 +126,7 @@ No explanation. No markdown formatting."""
     }
     
     # For demo user: store in session_store
-    if candidate_id == DEMO_CANDIDATE_ID:
+    if candidate_id == settings.DEMO_CANDIDATE_ID:
         from app.services import session_store
         session_store.save_session(f"roadmap:{candidate_id}", roadmap_data)
         return {"error": ""}
